@@ -1,17 +1,17 @@
-# TP3 : Créer un conteneur
+# Workshop 3 : Build a container
 
-**Objectif:** Créer et configurer des images docker.
+**Goal:** Build docker images and customize containers.
 
-## Créer une image
+## Build an image
 
-Pour mettre à jour l'image `python:3.8.7-alpine3.12` afin de contenir `vim`, utiliser le `Dockerfile` suivant:
+Crate a file named `Dockerfile` with the content:
 
 ```docker
-FROM python:3.8.7-alpine3.12 # Notre image de base
-RUN apk add vim # Installer vim
+FROM python:3.8.7-alpine3.12 # Base image to use
+RUN apk add vim # Install vim
 ```
 
-On construit ensuite l'image comme suit:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker build -t "python-with-vim:3.8.7-alpine3.12" .
@@ -37,11 +37,11 @@ python-with-vim   3.8.7-alpine3.12   c26bde9e8a1d   10 seconds ago   72.7MB
 python            3.8.7-alpine3.12   64df5e2068e3   2 weeks ago      44.5MB
 ```
 
-Remarquez les messages du type:
+Notice messages like:
 
 ```console
  Step 1/2 : FROM python:3.8.7-alpine3.12
- ---> 64df5e2068e3 # executer
+ ---> 64df5e2068e3
  Step 2/2 : RUN apk add vim
  ---> Running in 0cfd46dca811
  Removing intermediate container 0cfd46dca811
@@ -49,17 +49,17 @@ Remarquez les messages du type:
  Successfully built c26bde9e8a1d
 ```
 
-C'est la manifestation de la notions de couches:
+This is because docker uses layers to build the image in an incremental manner:
 
-1. On crée le tout premier conteneur (vide) `64df5e2068e3`, on éxecute l'instruction `FROM`
-2. Le `FROM` réussit ce qui donne vie au conteneur `0cfd46dca811`
-3. Dans le conteneur `0cfd46dca811`, on exécute l'instruction `RUN`
-4. Le `RUN` réussit et donne vie au conteneur `c26bde9e8a1d`
-5. Il n y a plus d'instructions à exécuter, le conteneur `c26bde9e8a1d` est donc notre conteneur final
+1. Create the base empty image `64df5e2068e3` and run `FROM` instruction
+2. `FROM` instruction succeeds and we now get a new image with id `0cfd46dca811`
+3. On image `0cfd46dca811` run instruction `RUN`
+4. `RUN` instruction succeeds and we now get a new image with id `c26bde9e8a1d`
+5. No more instructions left to run, so, `c26bde9e8a1d` is our final image
 
-## Lancer le nouveau conteneur
+## Run built container
 
-Vérifions que `vim` est bien présent dans notre nouvelle image. Lancer la commande:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker run --rm  -it python-with-vim:3.8.7-alpine3.12 /bin/sh
@@ -67,18 +67,15 @@ tjegham TP $ docker run --rm  -it python-with-vim:3.8.7-alpine3.12 /bin/sh
 VIM - Vi IMproved 8.2 (2019 Dec 12, compiled May 15 2020 18:14:07)
 Garbage after option argument: "-version"
 More info with: "vim -h"
-```
-
-On voit bien que vim est présent. Par contre le script python `hello.py` n'existe pas.
-
-```console
 / # python hello.py
 python: can't open file 'hello.py': [Errno 2] No such file or directory
 ```
 
-## Ajouter des fichiers
+We can see that `vim` exists in the container we launched based on our newly created image.
 
-Dans le même dossier que le `Dockerfile`, créer un fichier `hello.py` avec le contenu suivant:
+## Add files
+
+In the same folder as `Dockerfile`, create `hello.py` file with the content:
 
 ```python
 import os
@@ -87,14 +84,14 @@ import os
 print("Hello from environment {} !".format(os.getenv('ENV_NAME', default = "DEFAULT_ENV")))
 ```
 
-Pour ajouter le fichier dans l'image, on utilise l'instruction `COPY`. Dans le même dossier que le `Dockerfile`, créer un fichier `python-app.dockerfile` avec le contenu suivant:
+In the same folder as `Dockerfile`, create `python-app.dockerfile` file with the content:
 
 ```docker
-FROM python-with-vim:3.8.7-alpine3.12
-COPY hello.py .
+FROM python-with-vim:3.8.7-alpine3.12 # use base image having vim
+COPY hello.py . # Copy local hello.py file to the container
 ```
 
-Construire l'image comme suit:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker build -t python-app:3.8.7 -t docker-tp:py3.8-app -f python-app.dockerfile .
@@ -104,9 +101,9 @@ docker-tp         py3.8-app          bfebcca452fa   2 minutes ago    72.7MB
 python-app        3.8.7              bfebcca452fa   2 minutes ago    72.7MB
 ```
 
-Notez qu'il est possible de donner plusieurs tag à une seule image. Docker construit alors une seule image qu'on peut appeler par deux tags différents.
+Notice that we provided multiple tags `-t`. Tags are identifiers for docker images and a single docker image can have multiple tags (just like a person can have a middle name).
 
-Lancer le conteneur et vérifier l'output pour les deux images:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker run --rm docker-tp:py3.8-app python hello.py
@@ -115,9 +112,9 @@ tjegham TP $ docker run --rm python-app:3.8.7 python hello.py
 Hello from environment DEFAULT_ENV !
 ```
 
-## Configurer le conteneur
+## Customize container
 
-On peut paramétrer l'exécution d'un conteneur en lui passant des variables d'environnement. Par exemple:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker run --rm -e ENV_NAME="STAGING" docker-tp:py3.8-app python hello.py
@@ -126,14 +123,16 @@ tjegham TP $ docker run --rm -e ENV_NAME="PRODUCTION" docker-tp:py3.8-app python
 Hello from environment PRODUCTION !
 ```
 
-La valeur par défaut de la variable d'environnement peut être également définie au niveau du dockerfile. Toujours dans le même dossier, créer le fichier `python-app-with-default.dockerfile` avec le contenu suivant:
+As per the output, even though both containers use the same image, each command was able to override the `ENV_NAME` environment variable with a different value.
+
+Create a file named `python-app-with-default.dockerfile` with the following contents:
 
 ```docker
 FROM python-app:3.8.7
 ENV ENV_NAME="DEVELOPMENT"
 ```
 
-Construire l'image comme suit:
+In a terminal, run:
 
 ```console
 tjegham TP $ docker build -t docker-tp:py3.8-app -f python-app-with-default.dockerfile .
@@ -148,9 +147,12 @@ Successfully built baa97dffcce9
 Successfully tagged docker-tp:py3.8-app
 ```
 
-Notez qu'à la base on avait tag la même image par `docker-tp:py3.8-app` et `python-app:3.8.7`. Ce n'est plus le cas désormais, puisque le nouveau tag `docker-tp:py3.8-app` correspond à `python-app:3.8.7` dans lequel on a mis à jour la valeur par défaut de la variable d'environnement `ENV_NAME` à `DEVELOPMENT`.
+Notice that we reused the tag `docker-tp:py3.8-app` that used to point to `python-app:3.8.7` without the `python-app:3.8.7` tag.
+This means that `docker-tp:py3.8-app` and `python-app:3.8.7` no longer point to the same image. 
 
-Vérifier le comportement en lançant les deux images:
+Actually, `docker-tp:py3.8-app` is now `python-app:3.8.7` in which we updated the default value of environment variable `ENV_NAME` to `DEVELOPMENT`.
+
+To check that both images are not the same. In a terminal, run:
 
 ```console
 tjegham TP $ docker run --rm docker-tp:py3.8-app python hello.py

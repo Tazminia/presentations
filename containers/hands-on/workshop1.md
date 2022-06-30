@@ -1,10 +1,10 @@
-# TP1 : Lancer un conteneur
+# Workshop 1 : Run a container
 
-**Objectif:** Lancer un conteneur et de se familiariser avec les commandes de base de docker.
+**Goal:** Start a container and get used to basic docker commands.
 
-## Commandes abordées
+## Commands
 
-Les commandes à voir dans ce TP:
+The following commands will be used in this workshop:
 
 - run
 - image
@@ -12,17 +12,18 @@ Les commandes à voir dans ce TP:
 - log
 - rm
 
-## Lancer un conteneur
+## Run a container
 
-Pour lancer un conteneur, il suffit d'utiliser la commande `run` comme suit:
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker run python:3.8.7-alpine3.12 python --version
+Python 3.8.7
 ```
 
-Cette commande indique qu'on lance la commande `python --version` à l'intérieur d'un conteneur qu'on crée depuis l'image `python` ayant la version (tag) `3.8.7-alpine3.12`.
+Python 3.8.7 was started & it ran the command `python --version` which returned `Python 3.8.7`.
 
-Si vous n'avez jamais utilisé cette image, votre sortie ressemblera à ce qui suit:
+The first time you run the previous command, expect the following output:
 
 ```console
 Unable to find image 'python:3.8.7-alpine3.12' locally
@@ -37,11 +38,9 @@ Status: Downloaded newer image for python:3.8.7-alpine3.12
 Python 3.8.7
 ```
 
-La dernière ligne de l'output indique que notre `python --version` a bien fonctionné et qu'elle retourne `Python 3.8.7`.
+## List local images
 
-## Lister les images
-
-Si on souhaite lister les images docker disponibles sur notre machine on lance la commande suivante:
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker image ls
@@ -49,27 +48,25 @@ REPOSITORY      TAG                IMAGE ID       CREATED       SIZE
 python          3.8.7-alpine3.12   64df5e2068e3   2 weeks ago   44.5MB
 ```
 
-L'output nous indique la présence de l'image qu'on a téléchargé dans la première étape. On voit que l'image vient du repository `python`, que son tag est `3.8.7-alpine3.12` et qu'elle a une taille de `44.5MB`.
+The command lists images locally available. Since the previous command used `python:3.8.7-alpine3.12` the image was downloaded and stored locally.
 
-D'ailleurs, si on relance la commande, de run du début du TP, on remarquera que l'output est différent:
+## List containers
 
-```console
-tjegham ~ $ docker run python:3.8.7-alpine3.12 python --version
-Python 3.8.7
-```
-
-En effet le log du téléchargement disparaît.
-
-## Lister les conteneur
-
-Pour voir les conteneur en cours d'exécution, on lance la commande `ps` comme suit:
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker ps
 CONTAINER ID   IMAGE           COMMAND                  CREATED          STATUS          PORTS                    NAMES
 ```
 
-La commande ne retourne rien et pourtant on a bien lancé notre conteneur python. En effet, notre conteneur étant `volatile` s'est éteint dès qu'il a finit d'exécuter sa tâche `python --version`. Pour voir tous les conteneurs, y compris ceux qui sont éteints, lancer la commande suivantes:
+The commands lists containers that are running. 
+
+Although we ran a command to launch a container, it does not appear in the list.
+This is because, containers are `volatile`, it means that they dissapear once they have achieved their purpose.
+
+For instance, our container's purpose is to run `python --version`, once the version is printed, the dissapears.
+
+To view all containers present on the machine:
 
 ```console
 tjegham ~ $ docker ps -a
@@ -77,24 +74,25 @@ CONTAINER ID   IMAGE                     COMMAND                  CREATED       
 bc35d2378254   python:3.8.7-alpine3.12   "python --version"       13 minutes ago   Exited (0) 13 minutes ago                            tender_brahmagupta
 ```
 
-L'output nous indique que le conteneur `bc35d2378254` a été lancé en se basant sur l'image `python:3.8.7-alpine3.12`.
 
-Le conteneur a exécuté la commande `python --version` et s'est exécuté avec succès puisque le code de sortie était 0 `Exited (0)`.
+Here we see that container `bc35d2378254` was ran based on image `python:3.8.7-alpine3.12`.
 
-Comme on a pas donné de nom à notre conteneur, docker lui a généré un nom aléattoire `tender_brahmagupta`.
+The container executed command `python --version` which ended with a success code `Exited (0)`.
 
-## Explorer le log
+## View container logs
 
-Pour voir les logs d'un conteneur, il suffit de lancer la commande `logs`, comme suit:
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker logs bc35d2378254
 Python 3.8.7
 ```
 
-## Supprimer un conteneur
+We just viewed the logs produced by container `bc35d2378254`.
 
-Une fois qu'on a plus besoin du conteneur, on peut le supprimer en utilisant la commande `rm` comme suit:
+## Remove a container
+
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker rm bc35d2378254
@@ -103,9 +101,9 @@ tjegham ~ $ docker ps -a
 CONTAINER ID   IMAGE                     COMMAND                  CREATED          STATUS                      PORTS                    NAMES
 ```
 
-Docker nous retourne l'id du conteneur pour valider la suppression. Relancer le listing de conteneur, retourne désormais une liste vide.
+The command validates that the container was removed by sending back the container id `bc35d2378254`.
 
-Il est possible également, d'indiquer qu'il faut supprimer le conteneur dès qu'il finit de se lancer en utilisant l'option `--rm` lors de la commande run, comme suit:
+When expecting the container to be automatically removed once its work is finished, run:
 
 ```console
 tjegham ~ $ docker run --rm python:3.8.7-alpine3.12 python --version
