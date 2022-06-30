@@ -1,4 +1,4 @@
-# TP1 : Run a container
+# Workshop 1 : Run a container
 
 **Goal:** Start a container and get used to basic docker commands.
 
