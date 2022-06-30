@@ -1,10 +1,10 @@
-# TP4 : Manipuler les ports et les fichiers
+# Workshop 4 : Ports and files
 
-**Objectif:** Comprendre comment exposer les ports et modifier les fichiers de façon persistente.
+**Goal:** Exposing ports & manage persistent files.
 
-## Lancer une image nginx
+## Run an nginx container
 
-Nginx est un serveur web et proxy largement utilisé. Il est disponible sous forme d'une image docker et peut être lancé comme suit:
+Nginx is a popular web-server/proxy. It can be ran as a docker container:
 
 ```console
 tjegham ~ $ docker run --rm -d -p 30000:80 nginx:1.19.6-alpine
@@ -12,9 +12,9 @@ tjegham ~ $ curl --write-out 'HTTP CODE: %{http_code}\n' --silent --show-error -
 HTTP CODE: 200
 ```
 
-La commande curl retourne un status 200 pour dire que le site est bien joignable. Pour le valider, on peut également ouvrir un navigateur à l'adresse http://localhost:30000 qui affiche le message d'acceuil nginx.
+`curl` command returns status code 200. You can also check by going to http://localhost:30000 in your browser.
 
-Pour comprendre l'utilité du paramètre `-p`, lancer les commandes suivantes:
+Stop the nginx container and run:
 
 ```console
 tjegham ~ $ docker run --rm -d nginx:1.19.6-alpine
@@ -23,7 +23,9 @@ HTTP CODE: 000
 curl: (7) Failed to connect to localhost port 30000: Connection refused
 ```
 
-Le conteneur nginx est en cours d'exécution, mais la commande curl ne fonctionne plus. En effet, le conteneur étant `isolé`, le port n'est exposé que si on l'indique explicitement. On peut d'ailleurs vérifier que le nginx, à l'intérieur du conteneur, fonctionne toujours correctement sur le port 80:
+The server is no longer available, this is due to the **isolated** characteristic of our container. Since we did not specify the `-p` option, the port is not exposed.
+
+You can check that the nginx inside the container is still running. In a terminal run:
 
 ```console
 tjegham ~ $ docker ps
@@ -39,9 +41,9 @@ HTTP CODE: 200
 / # exit
 ```
 
-Remarquez que la ligne retournée par `docker ps` montre le port `80` sous la colonne `PORTS`. Ceci veut dire que le conteneur expose le port `80`.
+Notice that port 80 is listed under `PORTS` in the `docker ps` output. This means, the container exposes the port 80.
 
-Pour vérifier l'utilité du paramètre `-p`, on peut lancer un nginx qui expose son port `80` sur le port `30000` de la machine hôte et on observe le nouveau retour de la commande `docker ps`  comme suit:
+Let us add the `-p` option and check the ouput again. In a terminal, run:
 
 ```console
 tjegham ~ $ docker run -d --rm -p 30000:80 nginx:1.19.6-alpine
@@ -51,18 +53,18 @@ CONTAINER ID   IMAGE                 COMMAND                  CREATED          S
 5ae7a3bdcaab   nginx:1.19.6-alpine   "/docker-entrypoint.…"   3 seconds ago    Up 2 seconds    0.0.0.0:30000->80/tcp    hopeful_wu
 ```
 
-Remarquez que la colonne `PORTS` affiche désormais que le port `30000` est redirigé vers le port `80` du conteneur.
+Notice that `PORTS` now shows that port `30000` from the host is redirected to  port `80` from the container.
 
-## Modifier un fichier depuis la machine hôte
+## Edit a file from the host machine
 
-Créer un conteneur `ubuntu-21.04` comme suit:
+In a terminal, run:
 
 ```console
 tjegham ~ $ docker run --rm -it ubuntu:21.04 /bin/bash
 root@714e1692cff4:/#
 ```
 
-Dans le conteneur, créer le fichier `greeting.txt` avec le contenu `Hello from docker !` et l'afficher:
+In the container, run:
 
 ```console
 root@714e1692cff4:/# echo "Hello from docker !" > greeting.txt
@@ -70,7 +72,7 @@ root@714e1692cff4:/# cat greeting.txt
 Hello from docker !
 ```
 
-Sortir du contenaire, lancer un nouveau conteneur `ubuntu` et afficher le fichier `greeting.txt`:
+Now, exit the container and run a new one as follows:
 
 ```console
 root@714e1692cff4:/# exit
@@ -80,7 +82,9 @@ root@2d03709a4121:/# cat greeting.txt
 cat: greeting.txt: No such file or directory
 ```
 
-Etant donné la caractéristique `non persistent` de notre conteneur, le fichier précedemment créé n'existe plus. Pour contourner cet aspect, on va partager un fichier `greetings.txt` entre la machine hôte et notre conteneur:
+Containers are **stateless** and **isolated**, so the file we created in the other container does not exist in the new one.
+
+To avoid this, we can share files between the host and the container. In a terminal, run:
 
 ```console
 tjegham ~ $ echo "Hello from host machine !" > greetings.txt
@@ -91,9 +95,9 @@ root@99b1f73e131a:/# cat /data/greetings.txt
 Hello from host machine !
 ```
 
-Remarquez que le fichier à le même contenu dans le conteneur.
+Notice that the file content is the same in the host machine and inside the container.
 
-Modifier le fichier dans le conteneur pour rajouter la ligne `Welcome from ubuntu-21.04 !`:
+Edit the file inside the container to add `Welcome from ubuntu-21.04 !` as follows:
 
 ```console
 root@47ff2eff5260:/# echo "Welcome from ubuntu-21.04 !" >> /data/greetings.txt
@@ -102,7 +106,9 @@ Hello from host machine !
 Welcome from ubuntu-21.04 !
 ```
 
-Valider que le contenu du fichier persiste après être sorti du conteneur et que le conteneur soit supprimé:
+Check that the file still exists on the host machine.
+Validate that changes to the content of the file done in the container appear on the host machine.
+The changes persist even after the container was removed.
 
 ```console
 root@47ff2eff5260:/# exit
