@@ -115,4 +115,10 @@ Some of kubernetes basic features are:
 
 ![center](img/kubernetes-components.png)
 
+---
+
+## Kubernetes components (2/3)
+
+![center](img/control-plane.png)
+
 
