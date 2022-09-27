@@ -30,8 +30,9 @@ paginate: true
 * Containers orchestration 
 * Kubernetes
 * Kubernetes architecture components
-* Pods & deployments
-* Daemonsets, Jobs & CronJobs
+* Pods
+* Interacting with the cluster
+* Deployments, Daemonsets, Jobs & CronJobs
 * Labels & filtering
 * Namespaces
 * Services
@@ -57,6 +58,7 @@ When working with containers multiple limits can be observed:
 
 * What happens if the host machine is unstable ?
 * What happens if the containers use all of the available cpu or memory ?
+* Which machine is best suited to run the containers ?
 * What if one container is no longer enough to handle the load ?
 * What is responsible for restarting an unhealthy container ?
 * What is an unhealthy container ?
@@ -135,3 +137,59 @@ Some of kubernetes basic features are:
 ---
 
 ## Pods
+
+Pods are units containing one or multiple containers.
+
+Pods are kubernetes objects that are created by calling the kubernetes API.
+
+Pods follow the structure below:
+
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  # ... ignored for now
+  name: nginx # Pod name
+spec:
+  containers:
+  - image: nginx:stable # Container image
+    name: nginx # Container name
+  # ... ignored for now
+```
+
+---
+
+## Running a simple Pod
+
+In order to run a simple pod we can do the following:
+
+```console
+$ cat hands-on/yaml-samples/pod-sample.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nginx
+spec:
+  containers:
+  - image: nginx:stable
+    name: nginx
+$ kubectl apply -f hands-on/yaml-samples/pod-sample.yaml
+pod/my-nginx created
+```
+
+In docker, this would have been equivalent to:
+
+```console
+$ docker run -d -it nginx:stable
+```
+
+---
+
+<!-- _class: lead -->
+# Kubernetes basic commands
+
+---
+
+Please proceed to doing lab-1 in the hands-on folder.
+
+---
