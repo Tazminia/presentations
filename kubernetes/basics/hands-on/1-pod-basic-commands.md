@@ -76,7 +76,7 @@ Each output line shows:
 * RESTARTS (column 4): number of restarts since creation
 * AGE (column 5): time since creation
 
-## Get information on a pod
+## Get information on a specific pod
 
 ### Describe a pod
 
@@ -183,6 +183,27 @@ pod "nginx-run" deleted
 $ k get pod/nginx-run
 Error from server (NotFound): pods "nginx-run" not found
 ```
+
+## List all pods
+
+To list all pods:
+
+```console
+$ k get pods
+NAME              READY   STATUS    RESTARTS   AGE
+nginx-from-yaml   1/1     Running   0          78m
+nginx-oneliner    1/1     Running   0          75m
+$ k get pod
+NAME              READY   STATUS    RESTARTS   AGE
+nginx-from-yaml   1/1     Running   0          78m
+nginx-oneliner    1/1     Running   0          75m
+$ k get po
+NAME              READY   STATUS    RESTARTS   AGE
+nginx-from-yaml   1/1     Running   0          78m
+nginx-oneliner    1/1     Running   0          75m
+```
+
+All of the above commands are equivalent
 
 
 

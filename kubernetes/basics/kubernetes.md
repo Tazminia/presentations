@@ -31,8 +31,9 @@ paginate: true
 * Kubernetes
 * Kubernetes architecture components
 * Pods
-* Interacting with the cluster
-* Deployments, Daemonsets, Jobs & CronJobs
+* Pod basic commands
+* Deployments
+* Daemonsets, Jobs & CronJobs
 * Labels & filtering
 * Namespaces
 * Services
@@ -132,7 +133,7 @@ Some of kubernetes basic features are:
 ---
 
 <!-- _class: lead -->
-# Pods & Deployments
+# Pods
 
 ---
 
@@ -186,10 +187,19 @@ $ docker run -d -it nginx:stable
 ---
 
 <!-- _class: lead -->
-# Kubernetes basic commands
+# Pod basic commands
 
 ---
 
-Please proceed to doing lab-1 in the hands-on folder.
+Please proceed to hands-on [pod-basic-commands.md](hands-on/1-pod-basic-commands.md).
+
+---
+
+<!-- _class: lead -->
+# Deployments
+
+---
+
+Please proceed to hands-on [pods-vs-deployments.md](hands-on/2-pods-vs-deployments.md).
 
 ---
