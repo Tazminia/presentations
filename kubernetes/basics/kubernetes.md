@@ -200,6 +200,8 @@ Please proceed to hands-on [pod-basic-commands.md](hands-on/1-pod-basic-commands
 
 ---
 
-Please proceed to hands-on [pods-vs-deployments.md](hands-on/2-pods-vs-deployments.md).
+Deployments can be viewed as managed pods.
+
+In order to better understand the previous statement, please proceed to hands-on [pods-vs-deployments.md](hands-on/2-pods-vs-deployments.md).
 
 ---
