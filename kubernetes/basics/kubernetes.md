@@ -121,4 +121,17 @@ Some of kubernetes basic features are:
 
 ![center](img/control-plane.png)
 
+---
 
+## Kubernetes components (3/3)
+
+![center](img/nodes-components.png)
+
+---
+
+<!-- _class: lead -->
+# Pods & Deployments
+
+---
+
+## Pods
