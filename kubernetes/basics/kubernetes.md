@@ -165,16 +165,16 @@ spec:
 In order to run a simple pod we can do the following:
 
 ```console
-$ cat hands-on/yaml-samples/pod-sample.yaml
+$ cat hands-on/yaml-samples/pod.yaml
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx
+  name: nginx-from-yaml
 spec:
   containers:
   - image: nginx:stable
-    name: nginx
-$ kubectl apply -f hands-on/yaml-samples/pod-sample.yaml
+    name: nginx-from-yaml
+$ kubectl apply -f hands-on/yaml-samples/pod.yaml
 pod/my-nginx created
 ```
 

@@ -31,7 +31,7 @@ Create a pod named `nginx-from-yaml` with a single container named `nginx-from-y
 Make sure to be in the [hands-on](../hands-on/) folder.
 
 ```console
-$ k apply -f yaml-samples/pod-sample.yaml
+$ k apply -f yaml-samples/pod.yaml
 pod/nginx-from-yaml created # This is an output line
 ```
 

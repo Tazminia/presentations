@@ -2,8 +2,8 @@
 apiVersion: v1
 kind: Pod
 metadata:
-  name: nginx-simple-pod
+  name: nginx-from-yaml
 spec:
   containers:
   - image: nginx:stable
-    name: nginx-simple-pod
+    name: nginx-from-yaml
