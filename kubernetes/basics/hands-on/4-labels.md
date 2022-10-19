@@ -19,7 +19,7 @@ pod/nginx-ns-1 created
 List labels
 
 ```console
-k get pod --show-labels
+$ k get pod --show-labels
 NAME         READY   STATUS    RESTARTS   AGE   LABELS
 nginx-ns-1   1/1     Running   0          26m   run=nginx-ns-1
 $ k get pod nginx-ns-1 -o jsonpath="{.metadata.labels}"
@@ -31,7 +31,7 @@ $ k get pod nginx-ns-1 -o jsonpath="{.metadata.labels}"
 Create pod with one liner and add label `created-by` with value`one-liner`
 
 ```console
-cat <<EOF | k apply -f -
+$ cat <<EOF | k apply -f -
 apiVersion: v1
 kind: Pod
 metadata:
