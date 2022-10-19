@@ -252,3 +252,75 @@ Map of string keys and values that can be used to organize and categorize (scope
 * Labels enable **filtering** kubernetes objects based on a **key** and a **value**
 
 In order to better understand labels, please proceed to **hands-on** [labels.md](hands-on/4-labels.md).
+
+---
+
+<!-- _class: lead -->
+# Daemonset, Job & CronJob
+
+---
+
+* **Daemonset**
+    * Run a pod on **every node** of the cluster.
+    * If a new node is **added** to the cluster, a pod is **created** on it.
+    * If a node is **removed** from the cluster, the pod is **not created** elsewhere.
+* **Job**:
+    * Creates one or more pods and retries their execution until a specified number ends in success.
+    * Can be used to create pipelines with sequential & parallel steps, depending on completion status.
+    * Pods are kept until the job is deleted so that execution logs can be retrieved.
+* **CronJob**: a scheduled **Job**
+
+---
+
+<!-- _class: lead -->
+# Services
+
+---
+
+## Pods & IPs
+
+* Each **Pod** created is assigned an **ephemeral IP**
+* When **restarted**, the Pod IP can **change**
+* If a Pod `A` needs to access an application running in Pod `B`. Pod `A` can call Pod `B` through `Pod-B-IP:app-Port` for example `10.0.0.2:8080`
+* What if Pod `B` is **restarted** & gets assigned IP 10.0.0.3 ?
+
+---
+
+![center](img/service-discovery-problem.png)
+
+---
+
+```console
+$ k explain services
+#...
+Service is a named **abstraction** of software service (for example, mysql)
+consisting of **local port** (for example 3306) that the proxy listens on, and
+the **selector** that determines which pods will answer requests sent **through**
+the **proxy**
+```
+
+---
+
+![center](img/service-discovery-problem-fixed.png)
+
+---
+
+![center](img/service-load-balancing.png)
+
+---
+
+In order to better understand services, please proceed to **hands-on** [services.md](hands-on/5-services.md).
+
+---
+
+## Service types
+
+* **Cluster IP**:  Service is accessible only **internally** in the kubernetes cluster.
+    * This is the **default** type.
+    * A **private IP** is assigned to the service
+* **Node Port**: Service is accessible both **internally** and **externally**
+    * **External** access is done through a **port** allocated **on each machine** of the cluster (`machine-ip:allocated-port`).
+* **Load balancer**: Service is accessible both **internally** & **externally**
+    * **External** access is done through **load balancer** IP
+    * Call an **external API** to **provision & configure** a load balancer. 
+    * For example, call **GCP** API to create a **HTTP(S) Load Balancer**
