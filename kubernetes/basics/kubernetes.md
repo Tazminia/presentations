@@ -277,22 +277,20 @@ In order to better understand labels, please proceed to **hands-on** [labels.md]
 
 ---
 
-## Pods & IPs (1/2)
+## Pods & IPs
 
 * Each **Pod** created is assigned an **ephemeral IP**
 * When **restarted**, the Pod IP can **change**
-* If a Pod `A` needs to access an application running in Pod `B`
-    * Pod `A` can call Pod `B` through `Pod-B-IP:app-Port` for example (10.0.0.2:8080)
-* What if Pod `B` is restarted & gets assigned IP 10.0.0.3 ?
+* If a Pod `A` needs to access an application running in Pod `B`. Pod `A` can call Pod `B` through `Pod-B-IP:app-Port` for example `10.0.0.2:8080`
+* What if Pod `B` is **restarted** & gets assigned IP 10.0.0.3 ?
 
 ---
-
-## Pods & IPs (2/2)
 
 ![center](img/service-discovery-problem.png)
 
 ---
 
+```console
 $ k explain services
 #...
 Service is a named **abstraction** of software service (for example, mysql)
@@ -303,13 +301,9 @@ the **proxy**
 
 ---
 
-## Services & IPs
-
 ![center](img/service-discovery-problem-fixed.png)
 
 ---
-
-## Services & Pods
 
 ![center](img/service-load-balancing.png)
 
@@ -321,16 +315,12 @@ In order to better understand services, please proceed to **hands-on** [services
 
 ## Service types
 
-There are a few service types:
-
-* **Cluster IP**: 
-    * This is the **default** type. 
-    * A **private IP** is assigned to the service and it is only **internally** in the kubernetes cluster.
-* **Node Port**:
-    * A **port** is allocated **on each machine** of the clusters.
-    * Service is accessed through `machine-ip:allocated-port`
-    * Service is accessible both internally and externally (through the machine IP)
-* **Load balancer**:
-    * Call an **external API** to **provision & configure** a load balancer. For example, call GCP API to create a HTTPS Load Balancer
-    * Service is accessible through the load balancer's IP
-    * Service is accessible both internally & externally (through the LB IP)
+* **Cluster IP**:  Service is accessible only **internally** in the kubernetes cluster.
+    * This is the **default** type.
+    * A **private IP** is assigned to the service
+* **Node Port**: Service is accessible both **internally** and **externally**
+    * **External** access is done through a **port** allocated **on each machine** of the cluster (`machine-ip:allocated-port`).
+* **Load balancer**: Service is accessible both **internally** & **externally**
+    * **External** access is done through **load balancer** IP
+    * Call an **external API** to **provision & configure** a load balancer. 
+    * For example, call **GCP** API to create a **HTTP(S) Load Balancer**
